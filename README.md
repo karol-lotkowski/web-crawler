@@ -12,3 +12,10 @@ Demo web crawler that produces page map for given domain.
 * Build project: ./gradlew build
 * Run tests: ./gradlew clean test
 * Run application: ./gradlew bootRun
+
+# Business requirements
+
+#### Requirement 1 
+As a **Customer**  
+I would like to get **mocked page map with links for given domain**   
+so that I will **know page map initial contract**.  
