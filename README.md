@@ -53,3 +53,8 @@ so that I can **generate more page maps in the same time period**.
 As a **Product Owner**  
 I would like to **control used resources (CPU & memory) during scraping process**   
 so that web crawler **re-uses resources (threads) and do not over-uses resources**.
+
+#### Requirement 8 
+As a **Consumer**  
+I would like to **generate page map via HTTP request (REST API)**   
+so that page maps **would be possible to generate over HTTP protocol**.
