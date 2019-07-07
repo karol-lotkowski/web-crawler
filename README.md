@@ -17,6 +17,12 @@ Make sure that Lombok plugin is installed and `Enable annotation processing` opt
 * Run tests: ./gradlew clean test
 * Run application: ./gradlew bootRun
 
+# API client (Swagger UI)
+
+1. Run application: `./gradlew bootRun`  
+2. Open `http://localhost:8080/swagger-ui.html` in browser window  
+3. Define `domain` param and `Execute` request
+
 # Business requirements
 
 #### Requirement 1 
@@ -58,3 +64,8 @@ so that web crawler **re-uses resources (threads) and do not over-uses resources
 As a **Consumer**  
 I would like to **generate page map via HTTP request (REST API)**   
 so that page maps **would be possible to generate over HTTP protocol**.
+
+#### Requirement 9 
+As a **Consumer**  
+I would like to **have access to API documentation and be able to perform test requests**   
+so that Developer **can familiar with API and test API**.
