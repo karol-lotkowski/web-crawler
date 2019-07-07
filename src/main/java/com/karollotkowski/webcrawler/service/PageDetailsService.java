@@ -1,11 +1,14 @@
 package com.karollotkowski.webcrawler.service;
 
+import static java.lang.Runtime.getRuntime;
+import static java.util.stream.Collectors.toSet;
+
 import com.karollotkowski.webcrawler.domain.Page;
 import com.karollotkowski.webcrawler.scraper.PageScraper;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.concurrent.ForkJoinPool;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +22,10 @@ public class PageDetailsService {
   private final PageScraper pageScraper;
 
   private final Set<String> visitedUrls = new HashSet<>();
+  private final ForkJoinPool forkJoinPool = new ForkJoinPool(getRuntime().availableProcessors());
 
   Set<Page> getPages(@NonNull final String url) {
-    log.debug("Getting links for URL: {}", url);
+    log.debug("Getting pages for URL: {}", url);
 
     return getPageAndSubPages(url);
   }
@@ -39,8 +43,18 @@ public class PageDetailsService {
         final Set<Page> pages = new HashSet<>(linksToVisit.size() + 1);
         pages.add(page);
 
-        pages.addAll(getSubPages(linksToVisit));
-
+        if (!linksToVisit.isEmpty()) {
+          pages.addAll(
+              forkJoinPool
+                  .submit(
+                      () ->
+                          linksToVisit
+                              .parallelStream()
+                              .map(this::getPageAndSubPages)
+                              .flatMap(Collection::stream)
+                              .collect(toSet()))
+                  .get());
+        }
         return pages;
 
       } catch (final Exception ex) {
@@ -48,16 +62,5 @@ public class PageDetailsService {
       }
     }
     return Set.of();
-  }
-
-  private Set<Page> getSubPages(@NonNull final Set<String> pagesToVisit) {
-    if (pagesToVisit.isEmpty()) {
-      return Set.of();
-    }
-
-    return pagesToVisit.stream()
-        .map(this::getPageAndSubPages)
-        .flatMap(Collection::stream)
-        .collect(Collectors.toSet());
   }
 }

@@ -43,3 +43,8 @@ so that I will **know what static content (images, pdfs) is available for given 
 As a **Customer**  
 I would like to get **page map for all pages under given domain URL**   
 so that I will **know links and static content for each sub-page within given domain**.
+
+#### Requirement 6 
+As a **Customer**  
+I would like to get **page map 50% faster**   
+so that I can **generate more page maps in the same time period**.
