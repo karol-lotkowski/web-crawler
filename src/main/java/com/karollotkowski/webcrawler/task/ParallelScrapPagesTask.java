@@ -1,4 +1,4 @@
-package com.karollotkowski.webcrawler.service;
+package com.karollotkowski.webcrawler.task;
 
 import static java.lang.Runtime.getRuntime;
 import static java.util.stream.Collectors.toSet;
@@ -12,19 +12,19 @@ import java.util.concurrent.ForkJoinPool;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
 @AllArgsConstructor
-public class PageDetailsService {
+public class ParallelScrapPagesTask implements ScrapPagesTask {
 
+  private final String url;
   private final PageScraper pageScraper;
 
   private final Set<String> visitedUrls = new HashSet<>();
   private final ForkJoinPool forkJoinPool = new ForkJoinPool(getRuntime().availableProcessors());
 
-  Set<Page> getPages(@NonNull final String url) {
+  @Override
+  public Set<Page> call() {
     log.debug("Getting pages for URL: {}", url);
 
     return getPageAndSubPages(url);

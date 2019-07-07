@@ -48,3 +48,8 @@ so that I will **know links and static content for each sub-page within given do
 As a **Customer**  
 I would like to get **page map 50% faster**   
 so that I can **generate more page maps in the same time period**.
+
+#### Requirement 7 
+As a **Product Owner**  
+I would like to **control used resources (CPU & memory) during scraping process**   
+so that web crawler **re-uses resources (threads) and do not over-uses resources**.

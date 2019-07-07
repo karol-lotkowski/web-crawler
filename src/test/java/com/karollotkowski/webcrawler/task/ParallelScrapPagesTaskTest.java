@@ -1,4 +1,4 @@
-package com.karollotkowski.webcrawler.service;
+package com.karollotkowski.webcrawler.task;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -12,38 +12,36 @@ import com.karollotkowski.webcrawler.scraper.PageScraper;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.Mockito;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PageDetailsServiceTest {
+public class ParallelScrapPagesTaskTest {
 
   private final Fixtures fixtures = new Fixtures();
 
-  @InjectMocks private PageDetailsService pageDetailsService;
+  private PageScraper pageScraperMock = Mockito.mock(PageScraper.class);
 
-  @Mock private PageScraper pageScraper;
+  private ParallelScrapPagesTask parallelScrapPagesTask =
+      new ParallelScrapPagesTask(fixtures.domain, pageScraperMock);
 
   @Before
   public void setUp() {
-    given(pageScraper.getPageDetails(fixtures.domain)).willReturn(fixtures.pageDetailsForDomain);
-    given(pageScraper.getPageDetails(fixtures.domainSubPage))
+    given(pageScraperMock.getPageDetails(fixtures.domain))
+        .willReturn(fixtures.pageDetailsForDomain);
+
+    given(pageScraperMock.getPageDetails(fixtures.domainSubPage))
         .willReturn(fixtures.pageDetailsForSubPage);
   }
 
   @Test
   public void returnTwoPagesForDomain() {
     // when
-    final Set<Page> pages = pageDetailsService.getPages(fixtures.domain);
+    final Set<Page> pages = parallelScrapPagesTask.call();
 
     // then
     assertThat(pages).hasSameElementsAs(fixtures.expectedPages);
   }
 
   private class Fixtures {
-
     String domain = "http://domain.com";
     String externalDomain = "http://externaldomain.com";
 

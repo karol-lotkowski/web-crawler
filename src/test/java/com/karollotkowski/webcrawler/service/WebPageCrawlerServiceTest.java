@@ -9,6 +9,8 @@ import com.karollotkowski.webcrawler.domain.Links;
 import com.karollotkowski.webcrawler.domain.Page;
 import com.karollotkowski.webcrawler.domain.PageMap;
 import com.karollotkowski.webcrawler.domain.StaticContent;
+import com.karollotkowski.webcrawler.task.ScrapPagesTask;
+import com.karollotkowski.webcrawler.task.ScrapPagesTaskSupplier;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,13 +24,13 @@ public class WebPageCrawlerServiceTest {
 
   @InjectMocks private WebPageCrawlerService webPageCrawlerService;
 
-  @Mock private PageDetailsService pageDetailsService;
+  @Mock private ScrapPagesTaskSupplier scrapPagesTaskSupplier;
 
   private final Fixtures fixtures = new Fixtures();
 
   @Before
   public void setUp() {
-    given(pageDetailsService.getPages(any(String.class))).willReturn(fixtures.pages);
+    given(scrapPagesTaskSupplier.get(any(String.class))).willReturn(fixtures.scrapPagesTask);
   }
 
   @Test
@@ -71,6 +73,8 @@ public class WebPageCrawlerServiceTest {
             .build();
 
     Set<Page> pages = Set.of(page);
+
+    ScrapPagesTask scrapPagesTask = () -> pages;
 
     PageMap expectedPageMap = PageMap.builder().domain(domain).pages(pages).build();
   }
