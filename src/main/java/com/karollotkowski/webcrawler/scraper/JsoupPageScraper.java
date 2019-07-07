@@ -2,6 +2,7 @@ package com.karollotkowski.webcrawler.scraper;
 
 import static java.util.stream.Collectors.toSet;
 
+import com.karollotkowski.webcrawler.domain.PageDetails;
 import com.karollotkowski.webcrawler.exception.PageScrapingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,14 +49,17 @@ public class JsoupPageScraper implements PageScraper {
           EXTENSION_PY, EXTENSION_JS, EXTENSION_JSON, EXTENSION_XML, EXTENSION_SQL, EXTENSION_YAML);
 
   @Override
-  public Set<String> getLinks(@NonNull final String url) throws PageScrapingException {
+  public PageDetails getPageDetails(@NonNull final String url) throws PageScrapingException {
     log.info("Scrap page: {}", url);
 
     try {
       final Document doc = Jsoup.connect(url).get();
       final String domain = getDomain(url);
 
-      return getDomainLinks(domain, doc);
+      return PageDetails.builder()
+          .domainLinks(getDomainLinks(domain, doc))
+          .externalLinks(getExternalLinks(domain, doc))
+          .build();
 
     } catch (final Exception e) {
       log.error("Error occurred during page scraping: {}", url);
@@ -63,7 +67,7 @@ public class JsoupPageScraper implements PageScraper {
     }
   }
 
-  Set<String> getLinks(@NonNull final String url, @NonNull final String html)
+  PageDetails getPageDetails(@NonNull final String url, @NonNull final String html)
       throws PageScrapingException {
     log.info("Scrap HTML page: {}", html);
 
@@ -71,7 +75,10 @@ public class JsoupPageScraper implements PageScraper {
       final Document doc = Jsoup.parse(html);
       final String domain = getDomain(url);
 
-      return getDomainLinks(domain, doc);
+      return PageDetails.builder()
+          .domainLinks(getDomainLinks(domain, doc))
+          .externalLinks(getExternalLinks(domain, doc))
+          .build();
 
     } catch (final Exception e) {
       log.error("Error occurred during page scraping: {}", url);
@@ -98,7 +105,18 @@ public class JsoupPageScraper implements PageScraper {
         .collect(toSet());
   }
 
-  private String getExtension(final String link) {
+  private Set<String> getExternalLinks(@NonNull final String domain, @NonNull final Document doc) {
+
+    return doc.select(HTML_SELECTOR_LINK).stream()
+        .map(element -> element.attributes().get(ATTRIBUTE_HREF))
+        .filter(link -> !link.startsWith(domain) && !link.startsWith(SLASH))
+        .filter(link -> !FILES_EXTENTIONS.contains(getExtension(link)))
+        .filter(link -> !IMAGES_EXTENTIONS.contains(getExtension(link)))
+        .filter(link -> !SCRIPTS_EXTENTIONS.contains(getExtension(link)))
+        .collect(toSet());
+  }
+
+  private String getExtension(@NonNull final String link) {
     if (link.contains(DOT)) {
       return link.substring(link.lastIndexOf(DOT));
     }

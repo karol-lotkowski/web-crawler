@@ -28,3 +28,8 @@ so that I will **know page map initial contract**.
 As a **Customer**  
 I would like to get **page map with all links from single URL (domain)**   
 so that I will **know what sub-pages are available for given URL**.
+
+#### Requirement 3 
+As a **Customer**  
+I would like to get **page map with all links from single URL (domain)**   
+so that I will **know what sub-pages are available for given URL**.

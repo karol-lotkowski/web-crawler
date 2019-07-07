@@ -2,6 +2,9 @@ package com.karollotkowski.webcrawler.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.karollotkowski.webcrawler.domain.Links;
+import com.karollotkowski.webcrawler.domain.Page;
+import com.karollotkowski.webcrawler.domain.PageDetails;
 import java.util.Set;
 import org.junit.Test;
 
@@ -10,24 +13,39 @@ public class PageDetailsServiceTest {
   private final Fixtures fixtures = new Fixtures();
 
   private PageDetailsService pageDetailsService =
-      new PageDetailsService(url -> Set.of(fixtures.subPage1, fixtures.subPage2));
+      new PageDetailsService(
+          url ->
+              PageDetails.builder()
+                  .domainLinks(fixtures.domainSubPages)
+                  .externalLinks(fixtures.externalDomainPages)
+                  .build());
 
   @Test
-  public void returnDomainLinks() {
-    // given
-
+  public void returnPagesForDomain() {
     // when
-    final Set<String> links = pageDetailsService.getLinks(fixtures.domain);
+    final Set<Page> pages = pageDetailsService.getPages(fixtures.domain);
 
     // then
-    assertThat(links).hasSameElementsAs(Set.of(fixtures.subPage1, fixtures.subPage2));
+    assertThat(pages).hasSameElementsAs(Set.of(fixtures.page));
   }
 
   private class Fixtures {
 
     String domain = "http://domain.com";
+    String externalDomain = "http://externaldomain.com";
 
-    String subPage1 = domain + "/sub-page-1";
-    String subPage2 = domain + "/sub-page-2";
+    String domainSubPage1 = domain + "/sub-page-1";
+    String domainSubPage2 = domain + "/sub-page-2";
+
+    String externalDomainPage1 = externalDomain + "/page";
+
+    Set<String> domainSubPages = Set.of(domainSubPage1, domainSubPage2);
+    Set<String> externalDomainPages = Set.of(externalDomainPage1);
+
+    Page page =
+        Page.builder()
+            .url(domain)
+            .links(Links.builder().internal(domainSubPages).external(externalDomainPages).build())
+            .build();
   }
 }

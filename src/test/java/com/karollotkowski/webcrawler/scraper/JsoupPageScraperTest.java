@@ -2,6 +2,8 @@ package com.karollotkowski.webcrawler.scraper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.karollotkowski.webcrawler.domain.PageDetails;
+import com.karollotkowski.webcrawler.exception.PageScrapingException;
 import java.util.Set;
 import org.junit.Test;
 
@@ -14,10 +16,19 @@ public class JsoupPageScraperTest {
   @Test
   public void returnDomainLinksAndSkipExternalLinksAndFiles() {
     // when
-    final Set<String> links = jsoupPageScraper.getLinks(fixtures.domain, fixtures.html);
+    final PageDetails pageDetails = jsoupPageScraper.getPageDetails(fixtures.domain, fixtures.html);
 
     // then
-    assertThat(links).hasSameElementsAs(fixtures.expectedLinks);
+    assertThat(pageDetails).isEqualTo(fixtures.expectedPageDetails);
+  }
+
+  @Test(expected = PageScrapingException.class)
+  public void throwErrorForEmptyUrl() {
+    // given
+    final String emptyUrl = "";
+
+    // when
+    jsoupPageScraper.getPageDetails(emptyUrl);
   }
 
   @Test
@@ -26,10 +37,13 @@ public class JsoupPageScraperTest {
     final String domain = "https://www.wikipedia.org/";
 
     // when
-    final Set<String> links = jsoupPageScraper.getLinks(domain);
+    final PageDetails pageDetails = jsoupPageScraper.getPageDetails(domain);
 
     // then
-    assertThat(links).containsAnyOf("https://www.wikipedia.org//pl.wikipedia.org/");
+    assertThat(pageDetails.domainLinks)
+        .containsAnyOf("https://www.wikipedia.org//pl.wikipedia.org/");
+    assertThat(pageDetails.externalLinks)
+        .containsAnyOf("https://creativecommons.org/licenses/by-sa/3.0/");
   }
 
   private class Fixtures {
@@ -40,7 +54,8 @@ public class JsoupPageScraperTest {
         "<body>"
             + "<a href=\"/sub-page-1\">Link 1</a>"
             + "<a href=\"http://domain.com/sub-page-2\">Link 2</a>"
-            + "<a href=\"http://externaldomain.com/sub-page-2\">Link 2</a>"
+            + "<a href=\"http://externaldomain.com/sub-page-X\">External link X</a>"
+            + "<a href=\"http://externaldomain2.com/sub-page-Y\">External link Y</a>"
             + "<a href=\"http://domain.com/document.pdf\">PDF</a>"
             + "<a href=\"http://domain.com/document.docx\">DOCX</a>"
             + "<a href=\"http://domain.com/document.zip\">ZIP</a>"
@@ -57,6 +72,17 @@ public class JsoupPageScraperTest {
     String domainLink1 = domain + "/sub-page-1";
     String domainLink2 = domain + "/sub-page-2";
 
-    Set<String> expectedLinks = Set.of(domainLink1, domainLink2);
+    Set<String> expectedDomainLinks = Set.of(domainLink1, domainLink2);
+
+    String externalLink1 = "http://externaldomain.com/sub-page-X";
+    String externalLink2 = "http://externaldomain2.com/sub-page-Y";
+
+    Set<String> expectedExternalLinks = Set.of(externalLink1, externalLink2);
+
+    PageDetails expectedPageDetails =
+        PageDetails.builder()
+            .domainLinks(expectedDomainLinks)
+            .externalLinks(expectedExternalLinks)
+            .build();
   }
 }

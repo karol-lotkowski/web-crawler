@@ -4,6 +4,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import com.karollotkowski.webcrawler.domain.Links;
+import com.karollotkowski.webcrawler.domain.Page;
 import com.karollotkowski.webcrawler.domain.PageMap;
 import java.util.Set;
 import org.junit.Before;
@@ -24,7 +26,7 @@ public class WebPageCrawlerServiceTest {
 
   @Before
   public void setUp() {
-    given(pageDetailsService.getLinks(any(String.class))).willReturn(fixtures.domainLinks);
+    given(pageDetailsService.getPages(any(String.class))).willReturn(fixtures.pages);
   }
 
   @Test
@@ -43,11 +45,21 @@ public class WebPageCrawlerServiceTest {
 
     String domain = "http://domain.com";
 
-    String subPage1 = domain + "/sub-page1";
-    String subPage2 = domain + "/sub-page2";
+    String domainLink1 = domain + "/sub-page1";
+    String domainLink2 = domain + "/sub-page2";
+    Set<String> domainLinks = Set.of(domainLink1, domainLink2);
 
-    Set<String> domainLinks = Set.of(subPage1, subPage2);
+    String externalLink = "http://external.com";
+    Set<String> externalLinks = Set.of(externalLink);
 
-    PageMap expectedPageMap = PageMap.builder().domain(domain).pages(domainLinks).build();
+    Page page =
+        Page.builder()
+            .url(domain)
+            .links(Links.builder().internal(domainLinks).external(externalLinks).build())
+            .build();
+
+    Set<Page> pages = Set.of(page);
+
+    PageMap expectedPageMap = PageMap.builder().domain(domain).pages(pages).build();
   }
 }

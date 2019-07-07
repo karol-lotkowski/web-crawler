@@ -6,8 +6,8 @@ import lombok.Value;
 
 @Value
 @Builder
-public class PageMap {
+public class Links {
 
-  private final String domain;
-  private final Set<Page> pages;
+  private final Set<String> internal;
+  private final Set<String> external;
 }

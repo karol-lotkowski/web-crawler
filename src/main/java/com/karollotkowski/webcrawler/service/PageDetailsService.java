@@ -1,5 +1,6 @@
 package com.karollotkowski.webcrawler.service;
 
+import com.karollotkowski.webcrawler.domain.Page;
 import com.karollotkowski.webcrawler.scraper.PageScraper;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -14,9 +15,9 @@ public class PageDetailsService {
 
   private final PageScraper pageScraper;
 
-  Set<String> getLinks(@NonNull final String url) {
+  Set<Page> getPages(@NonNull final String url) {
     log.debug("Getting links for URL: {}", url);
 
-    return pageScraper.getLinks(url);
+    return Set.of(Page.from(url, pageScraper.getPageDetails(url)));
   }
 }

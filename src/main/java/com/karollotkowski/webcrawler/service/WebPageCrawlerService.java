@@ -18,7 +18,7 @@ public class WebPageCrawlerService {
     log.debug("Preparing page map for domain: {}", domain);
 
     try {
-      return PageMap.builder().domain(domain).pages(pageDetailsService.getLinks(domain)).build();
+      return PageMap.builder().domain(domain).pages(pageDetailsService.getPages(domain)).build();
 
     } catch (final Exception e) {
       throw new PageMapCreationException(domain);
