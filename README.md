@@ -33,3 +33,8 @@ so that I will **know what sub-pages are available for given URL**.
 As a **Customer**  
 I would like to get **page map with all external links from single domain URL**   
 so that I will **know what external links are available for given URL**.
+
+#### Requirement 4 
+As a **Customer**  
+I would like to get **page map with links to static content from single domain URL**   
+so that I will **know what static content (images, pdfs) is available for given URL**.

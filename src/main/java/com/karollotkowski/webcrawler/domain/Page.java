@@ -9,15 +9,23 @@ import lombok.Value;
 public class Page {
 
   private final String url;
-  private final Links links;
+  private final Elements elements;
 
   public static Page from(@NonNull final String url, @NonNull final PageDetails pageDetails) {
     return Page.builder()
         .url(url)
-        .links(
-            Links.builder()
-                .internal(pageDetails.domainLinks)
-                .external(pageDetails.getExternalLinks())
+        .elements(
+            Elements.builder()
+                .links(
+                    Links.builder()
+                        .internal(pageDetails.domainLinks)
+                        .external(pageDetails.getExternalLinks())
+                        .build())
+                .content(
+                    StaticContent.builder()
+                        .images(pageDetails.getImages())
+                        .pdfs(pageDetails.getPdfs())
+                        .build())
                 .build())
         .build();
   }

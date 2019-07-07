@@ -4,9 +4,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import com.karollotkowski.webcrawler.domain.Elements;
 import com.karollotkowski.webcrawler.domain.Links;
 import com.karollotkowski.webcrawler.domain.Page;
 import com.karollotkowski.webcrawler.domain.PageMap;
+import com.karollotkowski.webcrawler.domain.StaticContent;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,10 +54,20 @@ public class WebPageCrawlerServiceTest {
     String externalLink = "http://external.com";
     Set<String> externalLinks = Set.of(externalLink);
 
+    String image = domain + "/content/image.jpg";
+    Set<String> images = Set.of(image);
+
+    String pdf = domain + "/documents/info.pdf";
+    Set<String> pdfs = Set.of(pdf);
+
     Page page =
         Page.builder()
             .url(domain)
-            .links(Links.builder().internal(domainLinks).external(externalLinks).build())
+            .elements(
+                Elements.builder()
+                    .links(Links.builder().internal(domainLinks).external(externalLinks).build())
+                    .content(StaticContent.builder().images(images).pdfs(pdfs).build())
+                    .build())
             .build();
 
     Set<Page> pages = Set.of(page);

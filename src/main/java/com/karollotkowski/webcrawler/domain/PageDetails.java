@@ -10,4 +10,6 @@ public class PageDetails {
 
   public Set<String> domainLinks;
   public Set<String> externalLinks;
+  public Set<String> images;
+  public Set<String> pdfs;
 }

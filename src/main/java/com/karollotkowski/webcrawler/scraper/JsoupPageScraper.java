@@ -18,8 +18,10 @@ import org.springframework.stereotype.Component;
 public class JsoupPageScraper implements PageScraper {
 
   private static final String HTML_SELECTOR_LINK = "a";
+  private static final String HTML_SELECTOR_IMAGE = "img";
 
   private static final String ATTRIBUTE_HREF = "href";
+  private static final String ATTRIBUTE_SRC = "src";
 
   private static final String SLASH = "/";
   private static final String HASH = "#";
@@ -59,6 +61,8 @@ public class JsoupPageScraper implements PageScraper {
       return PageDetails.builder()
           .domainLinks(getDomainLinks(domain, doc))
           .externalLinks(getExternalLinks(domain, doc))
+          .images(getImages(doc))
+          .pdfs(getPdfs(doc))
           .build();
 
     } catch (final Exception e) {
@@ -78,6 +82,8 @@ public class JsoupPageScraper implements PageScraper {
       return PageDetails.builder()
           .domainLinks(getDomainLinks(domain, doc))
           .externalLinks(getExternalLinks(domain, doc))
+          .images(getImages(doc))
+          .pdfs(getPdfs(doc))
           .build();
 
     } catch (final Exception e) {
@@ -113,6 +119,21 @@ public class JsoupPageScraper implements PageScraper {
         .filter(link -> !FILES_EXTENTIONS.contains(getExtension(link)))
         .filter(link -> !IMAGES_EXTENTIONS.contains(getExtension(link)))
         .filter(link -> !SCRIPTS_EXTENTIONS.contains(getExtension(link)))
+        .collect(toSet());
+  }
+
+  private Set<String> getImages(@NonNull final Document doc) {
+
+    return doc.select(HTML_SELECTOR_IMAGE).stream()
+        .map(element -> element.attributes().get(ATTRIBUTE_SRC))
+        .filter(src -> !src.isEmpty())
+        .collect(toSet());
+  }
+
+  private Set<String> getPdfs(@NonNull final Document doc) {
+    return doc.select(HTML_SELECTOR_LINK).stream()
+        .map(element -> element.attributes().get(ATTRIBUTE_HREF))
+        .filter(link -> link.contains(EXTENSION_PDF))
         .collect(toSet());
   }
 

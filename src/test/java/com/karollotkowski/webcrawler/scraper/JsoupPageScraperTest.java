@@ -14,7 +14,7 @@ public class JsoupPageScraperTest {
   private final Fixtures fixtures = new Fixtures();
 
   @Test
-  public void returnDomainLinksAndSkipExternalLinksAndFiles() {
+  public void returnPageDetails() {
     // when
     final PageDetails pageDetails = jsoupPageScraper.getPageDetails(fixtures.domain, fixtures.html);
 
@@ -67,6 +67,8 @@ public class JsoupPageScraperTest {
             + "<a href=\"http://domain.com/file.sql\">SQL</a>"
             + "<a href=\"http://domain.com/file.yaml\">YAML</a>"
             + "<a href=\"http://domain.com/file.py\">PY</a>"
+            + "<img src=\"http://domain.com/image.png\"></img>"
+            + "<img src=\"http://domain.com/image.jpg\"></img>"
             + "</body>";
 
     String domainLink1 = domain + "/sub-page-1";
@@ -79,10 +81,20 @@ public class JsoupPageScraperTest {
 
     Set<String> expectedExternalLinks = Set.of(externalLink1, externalLink2);
 
+    String image1 = "http://domain.com/image.png";
+    String image2 = "http://domain.com/image.jpg";
+
+    Set<String> expectedImages = Set.of(image1, image2);
+
+    String pdf = "http://domain.com/document.pdf";
+    Set<String> expectedPdfs = Set.of(pdf);
+
     PageDetails expectedPageDetails =
         PageDetails.builder()
             .domainLinks(expectedDomainLinks)
             .externalLinks(expectedExternalLinks)
+            .images(expectedImages)
+            .pdfs(expectedPdfs)
             .build();
   }
 }
