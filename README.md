@@ -75,7 +75,7 @@ As a **Product Owner**
 I would like to **what can be improved in application**   
 so that web crawler **will provide more business value for Customers and Developers**.
 
-# Further extentions
+# Further extensions
 
 1. Add more test cases.  
 Extend current test classes with border cases (e.g. wrong input, exceptions). 
